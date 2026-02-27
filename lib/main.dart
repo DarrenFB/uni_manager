@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:uni_manager/screens/signup_login.dart';
-import 'screens/splash_screen.dart';
-import 'screens/home_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:isar_community/isar.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+import 'models/course.dart';
+import 'models/assignment.dart';
+import 'controllers/app_controller.dart';
+import 'screens/splash_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  // Initialize Isar database
+  final dir = await getApplicationDocumentsDirectory();
+  final isar = await Isar.open(
+    [CourseSchema, AssignmentSchema],
+    directory: dir.path,
+  );
+
+  Get.put(AppController(isar));
+
   runApp(const UniManagerApp());
 }
 
@@ -12,19 +36,49 @@ class UniManagerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'UniManager',
       debugShowCheckedModeBanner: false,
-
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.light,
-        primaryColor: Colors.deepPurple,
-        scaffoldBackgroundColor: Colors.white,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColors.background,
         fontFamily: 'Inter',
+        colorScheme: ColorScheme.dark(
+          primary: AppColors.accent,
+          surface: AppColors.surface,
+        ),
       ),
-
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
+}
+
+/// Central color palette
+class AppColors {
+  static const background = Color(0xFF0A0E1A);
+  static const surface = Color(0xFF131929);
+  static const card = Color(0xFF1A2235);
+  static const cardElevated = Color(0xFF1E2A3D);
+  static const accent = Color(0xFF6C63FF);
+  static const accentLight = Color(0xFF8B85FF);
+  static const accentSoft = Color(0x266C63FF);
+  static const textPrimary = Color(0xFFFFFFFF);
+  static const textSecondary = Color(0xFF8A94A6);
+  static const textMuted = Color(0xFF4A5568);
+  static const success = Color(0xFF4ECDC4);
+  static const warning = Color(0xFFFFD93D);
+  static const error = Color(0xFFFF6B6B);
+  static const border = Color(0xFF1E2A3D);
+
+  static const List<Color> courseColors = [
+    Color(0xFF6C63FF),
+    Color(0xFF4ECDC4),
+    Color(0xFFFF6B6B),
+    Color(0xFFFFD93D),
+    Color(0xFF45B7D1),
+    Color(0xFFFF8C42),
+    Color(0xFFA8E6CF),
+    Color(0xFFFF69B4),
+  ];
 }

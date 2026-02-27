@@ -1,10 +1,11 @@
-import 'package:isar/isar.dart';
+
+import 'package:isar_community/isar.dart';
 
 part 'istar.g.dart';
 
 @collection
 class User {
-  late Id id; // or: Id? id;
+  Id id = Isar.autoIncrement; // you can also use id = null to auto increment
 
   String? name;
 
