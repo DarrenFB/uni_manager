@@ -86,7 +86,7 @@ class _AuthScreenState extends State<AuthScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(14),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF6C63FF), Color(0xFF4ECDC4)],
+                        colors: [Color(0xFF6C63FF), Color.fromARGB(255, 3, 55, 225)],
                       ),
                     ),
                     child: const Icon(
@@ -99,7 +99,7 @@ class _AuthScreenState extends State<AuthScreen>
                   const SizedBox(height: 32),
 
                   Text(
-                    isLogin ? 'Welcome back' : 'Create account',
+                    isLogin ? 'Welcome Back' : 'Create Account',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 28,
@@ -125,7 +125,7 @@ class _AuthScreenState extends State<AuthScreen>
                     _buildField(
                       controller: _nameController,
                       label: 'Full Name',
-                      hint: 'Your name',
+                      hint: 'Your Name',
                       icon: Icons.person_outline_rounded,
                     ),
                     const SizedBox(height: 16),
