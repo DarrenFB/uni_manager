@@ -7,6 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'models/course.dart';
 import 'models/assignment.dart';
 import 'controllers/app_controller.dart';
+import 'controllers/view_controller.dart';
+import 'controllers/notification_controller.dart';
+import 'controllers/profile_controller.dart';
+import 'services/notification_service.dart';
 import 'screens/splash_screen.dart';
 
 Future<void> main() async {
@@ -26,7 +30,18 @@ Future<void> main() async {
     directory: dir.path,
   );
 
+  // Register controllers (NotificationController first — AppController depends on it)
+  Get.put(NotificationController());
   Get.put(AppController(isar));
+  Get.put(ViewController());
+  Get.put(ProfileController());
+
+  // Initialize notification service and schedule daily summary if enabled
+  await NotificationService.init();
+  final notifCtrl = Get.find<NotificationController>();
+  if (notifCtrl.dailySummaryEnabled.value) {
+    await NotificationService.scheduleDailySummary();
+  }
 
   runApp(const UniManagerApp());
 }

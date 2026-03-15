@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'dart:io';
 import 'package:uni_manager/main.dart';
 import 'package:uni_manager/controllers/app_controller.dart';
+import 'package:uni_manager/controllers/notification_controller.dart';
+import 'package:uni_manager/controllers/profile_controller.dart';
 import 'package:uni_manager/models/course.dart';
 import 'package:uni_manager/models/assignment.dart';
+import 'package:uni_manager/screens/notifications_screen.dart';
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -118,10 +122,47 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profileCtrl = Get.find<ProfileController>();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Row(
         children: [
+          // Tappable avatar → goes to Profile tab
+          GestureDetector(
+            onTap: () => ctrl.currentTabIndex.value = 4,
+            child: Obx(() {
+              final hasImage = profileCtrl.profileImagePath.value.isNotEmpty;
+              return Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6C63FF), Color(0xFF4ECDC4)],
+                  ),
+                ),
+                child: hasImage
+                    ? ClipOval(
+                        child: Image.file(
+                          File(profileCtrl.profileImagePath.value),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          profileCtrl.firstInitial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+              );
+            }),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,16 +171,16 @@ class _Header extends StatelessWidget {
                   ctrl.greeting,
                   style: TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Obx(() => Text(
-                      ctrl.userName.value,
+                      profileCtrl.name.value,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 17,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.3,
                       ),
@@ -148,32 +189,44 @@ class _Header extends StatelessWidget {
             ),
           ),
           // Notification bell
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Icon(Iconsax.notification, color: AppColors.textSecondary, size: 20),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppColors.accent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+          GestureDetector(
+            onTap: () => Get.to(() => const NotificationsScreen(),
+                transition: Transition.rightToLeft),
+            child: Obx(() {
+              final notifCtrl = Get.find<NotificationController>();
+              final hasUpcoming = notifCtrl
+                  .buildNotificationItems(ctrl.assignments)
+                  .isNotEmpty;
+              return Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
                 ),
-              ],
-            ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(Iconsax.notification,
+                        color: AppColors.textSecondary, size: 20),
+                    if (hasUpcoming)
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: AppColors.accent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              );
+            }),
           ),
         ],
       ),

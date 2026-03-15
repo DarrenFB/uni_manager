@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:isar_community/isar.dart';
-import 'package:uni_manager/models/course.dart';
 import 'package:uni_manager/models/assignment.dart';
+import 'package:uni_manager/models/course.dart';
+import 'package:uni_manager/services/notification_service.dart';
 
 class AppController extends GetxController {
   final Isar isar;
@@ -22,6 +23,7 @@ class AppController extends GetxController {
   }
 
   // ── Courses ──────────────────────────────────────────────────────────────
+
 
   Future<void> loadCourses() async {
     final all = await isar.courses.where().findAll();
@@ -53,9 +55,11 @@ class AppController extends GetxController {
   Future<void> addAssignment(Assignment assignment) async {
     await isar.writeTxn(() async => await isar.assignments.put(assignment));
     await loadAssignments();
+    await NotificationService.scheduleAssignmentReminders(assignment);
   }
 
   Future<void> deleteAssignment(int id) async {
+    await NotificationService.cancelAssignmentReminders(id);
     await isar.writeTxn(() async => await isar.assignments.delete(id));
     await loadAssignments();
   }
@@ -91,3 +95,4 @@ class AppController extends GetxController {
     return 'Good evening';
   }
 }
+

@@ -11,6 +11,10 @@ analyzer:
   errors:
     unused_import: ignore
 include: package:flutter_lints/flutter.yaml
+exclude:
+    - lib/**/*.g.dart
+    - lib/**/*.freezed.dart
+    - build/**
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -29,3 +33,4 @@ linter:
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+

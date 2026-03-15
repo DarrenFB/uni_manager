@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:uni_manager/main.dart';
-import 'package:uni_manager/controllers/app_controller.dart';
-import 'package:uni_manager/screens/tabs/dashboard_tab.dart';
-import 'package:uni_manager/screens/tabs/assignments_tab.dart';
-import 'package:uni_manager/screens/tabs/courses_tab.dart';
-import 'package:uni_manager/screens/tabs/calendar_tab.dart';
+import '../main.dart';
+import '../controllers/app_controller.dart';
+import 'tabs/dashboard_tab.dart';
+import 'tabs/assignments_tab.dart';
+import 'tabs/courses_tab.dart';
+import 'tabs/calendar_tab.dart';
+import 'package:uni_manager/screens/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,6 +21,7 @@ class HomeScreen extends StatelessWidget {
       const AssignmentsTab(),
       const CoursesTab(),
       const CalendarTab(),
+      const ProfileScreen(),
     ];
 
     return Obx(() => Scaffold(
@@ -44,6 +46,7 @@ class _BottomNav extends StatelessWidget {
       (Iconsax.task_square, Iconsax.task_square5, 'Tasks'),
       (Iconsax.book_1, Iconsax.book5, 'Courses'),
       (Iconsax.calendar_2, Iconsax.calendar_25, 'Calendar'),
+      (Iconsax.user, Iconsax.user5, 'Profile'),
     ];
 
     return Obx(() => Container(
@@ -68,7 +71,7 @@ class _BottomNav extends StatelessWidget {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
+                          horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.accentSoft
