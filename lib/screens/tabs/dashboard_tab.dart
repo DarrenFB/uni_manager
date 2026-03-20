@@ -70,7 +70,7 @@ class DashboardTab extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: _SectionHeader(
                     title: 'Upcoming Deadlines',
-                    actionLabel: 'See all',
+                    actionLabel: 'See All',
                     onAction: () => ctrl.currentTabIndex.value = 1,
                   ),
                 ),
@@ -190,7 +190,7 @@ class _Header extends StatelessWidget {
           ),
           // Notification bell
           GestureDetector(
-            onTap: () => Get.to(() => const NotificationsScreen(),
+            /* onTap: () => Get.to(() => const NotificationsScreen(),
                 transition: Transition.rightToLeft),
             child: Obx(() {
               final notifCtrl = Get.find<NotificationController>();
@@ -227,8 +227,8 @@ class _Header extends StatelessWidget {
                 ),
               );
             }),
-          ),
-        ],
+          ), */
+      )],
       ),
     );
   }

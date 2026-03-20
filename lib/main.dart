@@ -37,11 +37,12 @@ Future<void> main() async {
   Get.put(ProfileController());
 
   // Initialize notification service and schedule daily summary if enabled
+  /* Come back and fix this screen after the notification system is fully implemented. For now, it just has some placeholder UI to show where the settings and upcoming reminders will go. --- IGNORE ---
   await NotificationService.init();
   final notifCtrl = Get.find<NotificationController>();
   if (notifCtrl.dailySummaryEnabled.value) {
     await NotificationService.scheduleDailySummary();
-  }
+  }*/
 
   runApp(const UniManagerApp());
 }

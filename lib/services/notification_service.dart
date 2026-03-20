@@ -1,3 +1,10 @@
+/* Come back and fix this screen after the notification system is fully implemented. For now, it just has some placeholder UI to show where the settings and upcoming reminders will go. */
+/* --- IGNORE ---
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:uni_manager/controllers/notification_controller.dart';
+import 'package:uni_manager/services/notification_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -191,3 +198,4 @@ class NotificationService {
     return (assignmentId * 10 + type) % 2147483647;
   }
 }
+*/

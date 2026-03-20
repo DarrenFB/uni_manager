@@ -55,11 +55,11 @@ class AppController extends GetxController {
   Future<void> addAssignment(Assignment assignment) async {
     await isar.writeTxn(() async => await isar.assignments.put(assignment));
     await loadAssignments();
-    await NotificationService.scheduleAssignmentReminders(assignment);
+    // await NotificationService.scheduleAssignmentReminders(assignment); come back and fix this
   }
 
   Future<void> deleteAssignment(int id) async {
-    await NotificationService.cancelAssignmentReminders(id);
+    // await NotificationService.cancelAssignmentReminders(id); come back and fix this after the notification system is fully implemented
     await isar.writeTxn(() async => await isar.assignments.delete(id));
     await loadAssignments();
   }

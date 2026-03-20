@@ -11,14 +11,13 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        coreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
         
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "1.8"
     }
 
     defaultConfig {

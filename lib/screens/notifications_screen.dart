@@ -1,3 +1,4 @@
+/* Come back and fix this screen after the notification system is fully implemented. For now, it just has some placeholder UI to show where the settings and upcoming reminders will go.
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -447,3 +448,4 @@ class _EmptyReminders extends StatelessWidget {
     );
   }
 }
+*/
