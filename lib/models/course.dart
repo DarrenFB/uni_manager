@@ -12,12 +12,16 @@ class Course {
   late String room;
   late int colorIndex;
 
-  // Days as comma-separated string e.g. "Mon,Wed,Fri"
   late String days;
-  late String startTime; // e.g. "09:00"
-  late String endTime;   // e.g. "10:30"
+  late String startTime;
+  late String endTime;
+
+  // Semester info
+  late String semester; // e.g. "Fall 2025"
+  late DateTime semesterEndDate;
 
   String get displayTime => '$startTime - $endTime';
-
   List<String> get dayList => days.split(',').where((d) => d.isNotEmpty).toList();
+
+  bool get isActive => semesterEndDate.isAfter(DateTime.now());
 }

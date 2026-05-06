@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isar_community/isar.dart';
 import 'package:uni_manager/models/assignment.dart';
 import 'package:uni_manager/models/course.dart';
-import 'package:uni_manager/services/notification_service.dart';
 
 class AppController extends GetxController {
   final Isar isar;
@@ -11,8 +11,6 @@ class AppController extends GetxController {
   final courses = <Course>[].obs;
   final assignments = <Assignment>[].obs;
   final currentTabIndex = 0.obs;
-
-  // User info (in a real app, pull from auth/profile)
   final userName = 'Darren'.obs;
 
   @override
@@ -22,8 +20,7 @@ class AppController extends GetxController {
     loadAssignments();
   }
 
-  // ── Courses ──────────────────────────────────────────────────────────────
-
+  // ── Courses ───────────────────────────────────────────────────────────────
 
   Future<void> loadCourses() async {
     final all = await isar.courses.where().findAll();
@@ -35,7 +32,10 @@ class AppController extends GetxController {
     await loadCourses();
   }
 
-  Future<void> deleteCourse(int id) async {
+  Future<void> deleteCourse(int id, BuildContext context) async {
+    final confirmed = await _confirmDelete(context, 'Remove this course?',
+        'This will permanently delete the course and cannot be undone.');
+    if (!confirmed) return;
     await isar.writeTxn(() async => await isar.courses.delete(id));
     await loadCourses();
   }
@@ -45,7 +45,13 @@ class AppController extends GetxController {
     await loadCourses();
   }
 
-  // ── Assignments ──────────────────────────────────────────────────────────
+  List<Course> get activeCourses =>
+      courses.where((c) => c.isActive).toList();
+
+  List<Course> get pastCourses =>
+      courses.where((c) => !c.isActive).toList();
+
+  // ── Assignments ───────────────────────────────────────────────────────────
 
   Future<void> loadAssignments() async {
     final all = await isar.assignments.where().findAll();
@@ -55,11 +61,12 @@ class AppController extends GetxController {
   Future<void> addAssignment(Assignment assignment) async {
     await isar.writeTxn(() async => await isar.assignments.put(assignment));
     await loadAssignments();
-    // await NotificationService.scheduleAssignmentReminders(assignment); come back and fix this
   }
 
-  Future<void> deleteAssignment(int id) async {
-    // await NotificationService.cancelAssignmentReminders(id); come back and fix this after the notification system is fully implemented
+  Future<void> deleteAssignment(int id, BuildContext context) async {
+    final confirmed = await _confirmDelete(context, 'Delete this assignment?',
+        'This will permanently delete the assignment and cannot be undone.');
+    if (!confirmed) return;
     await isar.writeTxn(() async => await isar.assignments.delete(id));
     await loadAssignments();
   }
@@ -70,7 +77,33 @@ class AppController extends GetxController {
     await loadAssignments();
   }
 
-  // ── Computed helpers ─────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  Future<bool> _confirmDelete(
+      BuildContext context, String title, String message) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF131929),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(title,
+            style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600)),
+        content: Text(message,
+            style: const TextStyle(color: Color(0xFF8A94A6), fontSize: 14)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel', style: TextStyle(color: Color(0xFF8A94A6))),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete', style: TextStyle(color: Color(0xFFFF6B6B))),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
 
   List<Assignment> get upcomingAssignments {
     final incomplete = assignments.where((a) => !a.isCompleted).toList();
@@ -78,14 +111,16 @@ class AppController extends GetxController {
     return incomplete.take(5).toList();
   }
 
-  List<Assignment> get overdueAssignments {
-    return assignments.where((a) => a.isOverdue).toList();
-  }
+  List<Assignment> get overdueAssignments =>
+      assignments.where((a) => a.isOverdue).toList();
+
+  List<Assignment> get completedAssignments =>
+      assignments.where((a) => a.isCompleted).toList();
 
   List<Course> get todayCourses {
     final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     final todayStr = weekdays[DateTime.now().weekday - 1];
-    return courses.where((c) => c.dayList.contains(todayStr)).toList();
+    return activeCourses.where((c) => c.dayList.contains(todayStr)).toList();
   }
 
   String get greeting {
@@ -95,4 +130,3 @@ class AppController extends GetxController {
     return 'Good evening';
   }
 }
-

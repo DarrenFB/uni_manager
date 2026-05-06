@@ -163,7 +163,7 @@ class _AssignmentTile extends StatelessWidget {
         padding: const EdgeInsets.only(right: 20),
         child: Icon(Iconsax.trash, color: AppColors.error, size: 22),
       ),
-      onDismissed: (_) => ctrl.deleteAssignment(assignment.id),
+      confirmDismiss: (_) => ctrl.deleteAssignment(assignment.id, context).then((_) => false), //onDismissed: (_) => ctrl.deleteAssignment(assignment.id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(16),

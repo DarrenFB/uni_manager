@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'models/course.dart';
 import 'models/assignment.dart';
@@ -56,6 +57,7 @@ class UniManagerApp extends StatelessWidget {
       title: 'UniManager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textTheme: GoogleFonts.dmSansTextTheme(), // swap dmSans for whatever you want
         useMaterial3: true,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,

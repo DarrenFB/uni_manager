@@ -8,7 +8,7 @@ import 'package:uni_manager/controllers/notification_controller.dart';
 import 'package:uni_manager/controllers/profile_controller.dart';
 import 'package:uni_manager/models/course.dart';
 import 'package:uni_manager/models/assignment.dart';
-import 'package:uni_manager/screens/notifications_screen.dart';
+import 'package:uni_manager/screens/tabs/notification_tab.dart';
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -22,22 +22,14 @@ class DashboardTab extends StatelessWidget {
       body: SafeArea(
         child: Obx(() => CustomScrollView(
               slivers: [
-                // Header
-                SliverToBoxAdapter(
-                  child: _Header(ctrl: ctrl),
-                ),
-
-                // Stats row
+                SliverToBoxAdapter(child: _Header(ctrl: ctrl)),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: _StatsRow(ctrl: ctrl),
                   ),
                 ),
-
                 const SliverToBoxAdapter(child: SizedBox(height: 28)),
-
-                // Today's Schedule
                 SliverToBoxAdapter(
                   child: _SectionHeader(
                     title: "Today's Schedule",
@@ -55,18 +47,14 @@ class DashboardTab extends StatelessWidget {
                           height: 120,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             itemCount: ctrl.todayCourses.length,
                             itemBuilder: (_, i) =>
                                 _TodayCourseCard(course: ctrl.todayCourses[i]),
                           ),
                         ),
                 ),
-
                 const SliverToBoxAdapter(child: SizedBox(height: 28)),
-
-                // Upcoming Assignments
                 SliverToBoxAdapter(
                   child: _SectionHeader(
                     title: 'Upcoming Deadlines',
@@ -75,7 +63,6 @@ class DashboardTab extends StatelessWidget {
                   ),
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
                 if (ctrl.upcomingAssignments.isEmpty)
                   SliverToBoxAdapter(
                     child: _EmptyState(
@@ -94,7 +81,6 @@ class DashboardTab extends StatelessWidget {
                       childCount: ctrl.upcomingAssignments.length,
                     ),
                   ),
-
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
               ],
             )),
@@ -128,7 +114,6 @@ class _Header extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Row(
         children: [
-          // Tappable avatar → goes to Profile tab
           GestureDetector(
             onTap: () => ctrl.currentTabIndex.value = 4,
             child: Obx(() {
@@ -190,8 +175,12 @@ class _Header extends StatelessWidget {
           ),
           // Notification bell
           GestureDetector(
-            /* onTap: () => Get.to(() => const NotificationsScreen(),
-                transition: Transition.rightToLeft),
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const NotificationTab(),
+            ),
             child: Obx(() {
               final notifCtrl = Get.find<NotificationController>();
               final hasUpcoming = notifCtrl
@@ -227,8 +216,8 @@ class _Header extends StatelessWidget {
                 ),
               );
             }),
-          ), */
-      )],
+          ),
+        ],
       ),
     );
   }
@@ -392,8 +381,8 @@ class _TodayCourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = AppColors.courseColors[
-        course.colorIndex % AppColors.courseColors.length];
+    final color =
+        AppColors.courseColors[course.colorIndex % AppColors.courseColors.length];
 
     return Container(
       width: 180,
@@ -486,7 +475,6 @@ class _AssignmentCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Color indicator
           Container(
             width: 4,
             height: 44,

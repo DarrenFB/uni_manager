@@ -47,23 +47,38 @@ const CourseSchema = CollectionSchema(
       name: r'endTime',
       type: IsarType.string,
     ),
-    r'name': PropertySchema(
+    r'isActive': PropertySchema(
       id: 6,
+      name: r'isActive',
+      type: IsarType.bool,
+    ),
+    r'name': PropertySchema(
+      id: 7,
       name: r'name',
       type: IsarType.string,
     ),
     r'professor': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'professor',
       type: IsarType.string,
     ),
     r'room': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'room',
       type: IsarType.string,
     ),
+    r'semester': PropertySchema(
+      id: 10,
+      name: r'semester',
+      type: IsarType.string,
+    ),
+    r'semesterEndDate': PropertySchema(
+      id: 11,
+      name: r'semesterEndDate',
+      type: IsarType.dateTime,
+    ),
     r'startTime': PropertySchema(
-      id: 9,
+      id: 12,
       name: r'startTime',
       type: IsarType.string,
     )
@@ -102,6 +117,7 @@ int _courseEstimateSize(
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.professor.length * 3;
   bytesCount += 3 + object.room.length * 3;
+  bytesCount += 3 + object.semester.length * 3;
   bytesCount += 3 + object.startTime.length * 3;
   return bytesCount;
 }
@@ -118,10 +134,13 @@ void _courseSerialize(
   writer.writeString(offsets[3], object.days);
   writer.writeString(offsets[4], object.displayTime);
   writer.writeString(offsets[5], object.endTime);
-  writer.writeString(offsets[6], object.name);
-  writer.writeString(offsets[7], object.professor);
-  writer.writeString(offsets[8], object.room);
-  writer.writeString(offsets[9], object.startTime);
+  writer.writeBool(offsets[6], object.isActive);
+  writer.writeString(offsets[7], object.name);
+  writer.writeString(offsets[8], object.professor);
+  writer.writeString(offsets[9], object.room);
+  writer.writeString(offsets[10], object.semester);
+  writer.writeDateTime(offsets[11], object.semesterEndDate);
+  writer.writeString(offsets[12], object.startTime);
 }
 
 Course _courseDeserialize(
@@ -136,10 +155,12 @@ Course _courseDeserialize(
   object.days = reader.readString(offsets[3]);
   object.endTime = reader.readString(offsets[5]);
   object.id = id;
-  object.name = reader.readString(offsets[6]);
-  object.professor = reader.readString(offsets[7]);
-  object.room = reader.readString(offsets[8]);
-  object.startTime = reader.readString(offsets[9]);
+  object.name = reader.readString(offsets[7]);
+  object.professor = reader.readString(offsets[8]);
+  object.room = reader.readString(offsets[9]);
+  object.semester = reader.readString(offsets[10]);
+  object.semesterEndDate = reader.readDateTime(offsets[11]);
+  object.startTime = reader.readString(offsets[12]);
   return object;
 }
 
@@ -163,12 +184,18 @@ P _courseDeserializeProp<P>(
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
     case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
+      return (reader.readDateTime(offset)) as P;
+    case 12:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1101,6 +1128,16 @@ extension CourseQueryFilter on QueryBuilder<Course, Course, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Course, Course, QAfterFilterCondition> isActiveEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isActive',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Course, Course, QAfterFilterCondition> nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1489,6 +1526,190 @@ extension CourseQueryFilter on QueryBuilder<Course, Course, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semester',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'semester',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'semester',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semester',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'semester',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterEndDateEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'semesterEndDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition>
+      semesterEndDateGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'semesterEndDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterEndDateLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'semesterEndDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterFilterCondition> semesterEndDateBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'semesterEndDate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Course, Course, QAfterFilterCondition> startTimeEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1685,6 +1906,18 @@ extension CourseQuerySortBy on QueryBuilder<Course, Course, QSortBy> {
     });
   }
 
+  QueryBuilder<Course, Course, QAfterSortBy> sortByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> sortByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
   QueryBuilder<Course, Course, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1718,6 +1951,30 @@ extension CourseQuerySortBy on QueryBuilder<Course, Course, QSortBy> {
   QueryBuilder<Course, Course, QAfterSortBy> sortByRoomDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'room', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> sortBySemester() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semester', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> sortBySemesterDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semester', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> sortBySemesterEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterEndDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> sortBySemesterEndDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterEndDate', Sort.desc);
     });
   }
 
@@ -1807,6 +2064,18 @@ extension CourseQuerySortThenBy on QueryBuilder<Course, Course, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Course, Course, QAfterSortBy> thenByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> thenByIsActiveDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isActive', Sort.desc);
+    });
+  }
+
   QueryBuilder<Course, Course, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1840,6 +2109,30 @@ extension CourseQuerySortThenBy on QueryBuilder<Course, Course, QSortThenBy> {
   QueryBuilder<Course, Course, QAfterSortBy> thenByRoomDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'room', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> thenBySemester() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semester', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> thenBySemesterDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semester', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> thenBySemesterEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterEndDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Course, Course, QAfterSortBy> thenBySemesterEndDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'semesterEndDate', Sort.desc);
     });
   }
 
@@ -1897,6 +2190,12 @@ extension CourseQueryWhereDistinct on QueryBuilder<Course, Course, QDistinct> {
     });
   }
 
+  QueryBuilder<Course, Course, QDistinct> distinctByIsActive() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isActive');
+    });
+  }
+
   QueryBuilder<Course, Course, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1915,6 +2214,19 @@ extension CourseQueryWhereDistinct on QueryBuilder<Course, Course, QDistinct> {
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'room', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Course, Course, QDistinct> distinctBySemester(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semester', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Course, Course, QDistinct> distinctBySemesterEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'semesterEndDate');
     });
   }
 
@@ -1969,6 +2281,12 @@ extension CourseQueryProperty on QueryBuilder<Course, Course, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Course, bool, QQueryOperations> isActiveProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isActive');
+    });
+  }
+
   QueryBuilder<Course, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -1984,6 +2302,18 @@ extension CourseQueryProperty on QueryBuilder<Course, Course, QQueryProperty> {
   QueryBuilder<Course, String, QQueryOperations> roomProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'room');
+    });
+  }
+
+  QueryBuilder<Course, String, QQueryOperations> semesterProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semester');
+    });
+  }
+
+  QueryBuilder<Course, DateTime, QQueryOperations> semesterEndDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'semesterEndDate');
     });
   }
 
